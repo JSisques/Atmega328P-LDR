@@ -1,0 +1,52 @@
+
+SER R16
+OUT DDRB, R16
+RCALL config_ADC
+
+main:
+	LDS R17, ADCSRA
+	ORI R17, (1 << ADSC)
+	STS ADCSRA, R17
+
+esperaADC:
+	CLR R17
+	LDS R17, ADCSRA
+	SBRC R17, ADSC
+	RJMP esperaADC
+
+	LDS R16, ADCH
+	
+	CPI R16, 128
+	BRPL encender
+
+	CLR R20
+	OUT PORTB, R20
+	RJMP seguir
+
+encender:
+	SER R20
+	OUT PORTB, R20
+
+seguir:
+	RJMP main
+
+config_ADC:
+	PUSH R16
+
+	LDI R16, (1 << ADEN)
+	ORI R16, (0 << ADATE)
+	ORI R16, (0 << ADIE)
+	ORI R16, (1 << ADPS2)|(1 << ADPS1)|(1 << ADPS0)
+	STS ADCSRA, R16
+	ORI R16, (0 << ADTS2)|(0 << ADTS1)|(1 << ADTS0)
+	STS ADCSRB, R16
+	LDI R16, (1 << MUX0)
+	ORI R16, (0 << REFS1) | (1 << REFS0)
+	ORI R16, (1 << ADLAR)
+	STS ADMUX, R16
+	LDI R16, (1 << ADC1D)
+	STS DIDR0, R16
+	LDI R16, (0 << PRADC)
+	STS PRR, R16
+	POP R16
+	RET

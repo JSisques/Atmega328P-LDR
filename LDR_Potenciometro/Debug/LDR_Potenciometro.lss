@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  c:\users\javi\Documents\Atmel Studio\7.0\LDR_Potenciometro\LDR_Potenciometro\main.asm Tue May 04 09:13:09 2021
+AVRASM ver. 2.2.8  c:\users\javi\Documents\Atmel Studio\7.0\LDR_Potenciometro\LDR_Potenciometro\main.asm Tue May 04 09:56:40 2021
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
@@ -1014,27 +1014,28 @@ AVRASM ver. 2.2.8  c:\users\javi\Documents\Atmel Studio\7.0\LDR_Potenciometro\LD
 000015 b945                      	OUT PORTB, R20
                                  
                                  seguir:
-000016 cfec                      	RJMP main
+000016 cfec                      	RJMP main													;Saltamos a la función main
                                  
                                  config_ADC:
-000017 930f                      	PUSH R16
+000017 930f                      	PUSH R16													;Hacemos una copia de seguridad de R16 en la pila
                                  
-000018 e800                      	LDI R16, (1 << ADEN)
-000019 6000                      	ORI R16, (0 << ADATE)
-00001a 6000                      	ORI R16, (0 << ADIE)
-00001b 6007                      	ORI R16, (1 << ADPS2)|(1 << ADPS1)|(1 << ADPS0)
-00001c 9300 007a                 	STS ADCSRA, R16
-00001e 6001                      	ORI R16, (0 << ADTS2)|(0 << ADTS1)|(1 << ADTS0)
-00001f 9300 007b                 	STS ADCSRB, R16
-000021 e001                      	LDI R16, (1 << MUX0)
-000022 6400                      	ORI R16, (0 << REFS1) | (1 << REFS0)
-000023 6200                      	ORI R16, (1 << ADLAR)
-000024 9300 007c                 	STS ADMUX, R16
-000026 e002                      	LDI R16, (1 << ADC1D)
-000027 9300 007e                 	STS DIDR0, R16
-000029 e000                      	LDI R16, (0 << PRADC)
-00002a 9300 0064                 	STS PRR, R16
-00002c 910f                      	POP R16
+000018 e800                      	LDI R16, (1 << ADEN)										;Activamos el ADC
+000019 6000                      	ORI R16, (0 << ADATE)										;Deshabilitamos el autodisparo del conversor
+00001a 6000                      	ORI R16, (0 << ADIE)										;Deshabilitamos la interrupcion de conversion completada
+00001b 6007                      	ORI R16, (1 << ADPS2)|(1 << ADPS1)|(1 << ADPS0)				;Bits de configuración para la velocidad del reloj
+00001c 9300 007a                 	STS ADCSRA, R16												;Guardamos la configuracion anterior en la variable ADCSRA
+00001e 6001                      	ORI R16, (0 << ADTS2)|(0 << ADTS1)|(1 << ADTS0)				;Bits de configuracion para conversiones automaticas, en este caso usamos Analog Comparator
+00001f 9300 007b                 	STS ADCSRB, R16												;Guardamos lo anterior en la variable ADCSRB
+000021 e001                      	LDI R16, (1 << MUX0)										;Seleccionamos el canal de entrada en este caso el A1 Mux4:0 = 0001
+000022 6400                      	ORI R16, (0 << REFS1) | (1 << REFS0)						;Establecemos la tensión máxima en este caso los 5V internos
+000023 6200                      	ORI R16, (1 << ADLAR)										;Resolucion de 8 bits para el ADC
+000024 9300 007c                 	STS ADMUX, R16												;Guardamos lo anterior en la variable ADMUX
+000026 e002                      	LDI R16, (1 << ADC1D)										;Desactivamos el input digital para el canal 1 (ahorra energia)
+000027 9300 007e                 	STS DIDR0, R16												;Guardamos lo anterior en la variable DIDR0
+000029 e000                      	LDI R16, (0 << PRADC)										;Desactivamos la reducción de energia
+00002a 9300 0064                 	STS PRR, R16												;Guardamos lo anterior en la variable PRR
+                                 	
+00002c 910f                      	POP R16														;Recuperamos el valor de R16 guardado en la pila														
 
 
 RESOURCE USE INFORMATION
